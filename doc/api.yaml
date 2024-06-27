@@ -1,0 +1,438 @@
+openapi: 3.0.0
+info:
+  title: Things API
+  description: ''
+  version: 1.0.0
+  contact: {}
+paths:
+  /init:
+        - bearer: []
+    get:
+      operationId: UserController_findAll
+      summary: Get all users
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      tags:
+        - Users
+      security:
+        - bearer: []
+  /user/{id}:
+    get:
+      operationId: UserController_findOne
+      summary: Get single user by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: The ID of the user
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: ID has invalid format
+        '404':
+          description: User not found
+      tags:
+        - Users
+      security:
+        - bearer: []
+    put:
+      operationId: UserController_update
+      summary: Update user password
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: The ID of the user
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserPasswordDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: ID has invalid format
+        '403':
+          description: Old password is wrong
+        '404':
+          description: User not found
+      tags:
+        - Users
+      security:
+        - bearer: []
+    delete:
+      operationId: UserController_remove
+      summary: Delete user
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: The ID of the user
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '204':
+          description: Successful
+        '400':
+          description: ID has invalid format
+        '404':
+          description: User not found
+      tags:
+        - Users
+      security:
+        - bearer: []
+    post:
+      operationId: FavoriteController_add
+      summary: Add entity
+      parameters:
+        - name: entity
+          required: true
+          in: path
+          description: The entity type
+          schema:
+            enum:
+              - artist
+              - album
+              - track
+            type: string
+        - name: id
+          required: true
+          in: path
+          description: The ID of the entity
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '201':
+          description: The entity has been added.
+        '400':
+          description: ID has invalid format
+        '422':
+          description: The entity doesn't exist
+      tags:
+        - Favorites
+      security:
+        - bearer: []
+    delete:
+      operationId: FavoriteController_delete
+      summary: Remove album
+      parameters:
+        - name: entity
+          required: true
+          in: path
+          description: The entity type
+          schema:
+            enum:
+              - artist
+              - album
+              - track
+            type: string
+        - name: id
+          required: true
+          in: path
+          description: The ID of the album
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '204':
+          description: Successful
+        '400':
+          description: ID has invalid format
+        '404':
+          description: Record not found
+      tags:
+        - Favorites
+      security:
+        - bearer: []
+  /auth/login:
+    post:
+      operationId: AuthController_login
+      summary: User Sign In
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenDto'
+        '400':
+          description: ''
+        '401':
+          description: ''
+        '403':
+          description: Wrong Credentials
+      tags:
+        - Auth
+tags: []
+servers:
+  - url: /
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    CreateUserDto:
+      type: object
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required:
+        - login
+        - password
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        login:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        version:
+          type: number
+          minimum: 1
+        createdAt:
+          format: timestamp
+          type: string
+        updatedAt:
+          format: timestamp
+          type: string
+      required:
+        - id
+        - login
+        - password
+        - version
+        - createdAt
+        - updatedAt
+    UpdateUserPasswordDto:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+          description: The user's old password
+        newPassword:
+          type: string
+          description: The user's new password
+      required:
+        - oldPassword
+        - newPassword
+    CreateTrackDto:
+      type: object
+      properties:
+        name:
+          type: string
+        artistId:
+          type: string
+          format: uuid
+        albumId:
+          type: string
+          format: uuid
+        duration:
+          type: number
+          minimum: 0
+      required:
+        - name
+        - duration
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        artistId:
+          type: string
+          format: uuid
+        albumId:
+          type: string
+          format: uuid
+        duration:
+          type: number
+          minimum: 0
+      required:
+        - id
+        - name
+        - duration
+    UpdateTrackDto:
+      type: object
+      properties:
+        name:
+          type: string
+        artistId:
+          type: string
+          format: uuid
+        albumId:
+          type: string
+          format: uuid
+        duration:
+          type: number
+          minimum: 0
+    CreateArtistDto:
+      type: object
+      properties:
+        name:
+          type: string
+        grammy:
+          type: boolean
+      required:
+        - name
+        - grammy
+    Artist:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        grammy:
+          type: boolean
+      required:
+        - id
+        - name
+        - grammy
+    UpdateArtistDto:
+      type: object
+      properties:
+        name:
+          type: string
+        grammy:
+          type: boolean
+    CreateAlbumDto:
+      type: object
+      properties:
+        name:
+          type: string
+        year:
+          type: number
+          format: year
+          minimum: 1900
+        artistId:
+          type: string
+          format: uuid
+      required:
+        - name
+        - year
+    Album:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        year:
+          type: number
+          format: year
+          minimum: 1900
+        artistId:
+          type: string
+          format: uuid
+      required:
+        - id
+        - name
+        - year
+    UpdateAlbumDto:
+      type: object
+      properties:
+        name:
+          type: string
+        year:
+          type: number
+          format: year
+          minimum: 1900
+        artistId:
+          type: string
+          format: uuid
+    Favorite:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/Artist'
+        albums:
+          type: array
+          items:
+            $ref: '#/components/schemas/Album'
+        tracks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Track'
+      required:
+        - id
+        - artists
+        - albums
+        - tracks
+    LoginUserDto:
+      type: object
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required:
+        - login
+        - password
+    TokenDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+      required:
+        - accessToken
+        - refreshToken
+      type: object
+      properties:
+        refreshToken:
+          type: string
+      required:
+        - refreshToken
