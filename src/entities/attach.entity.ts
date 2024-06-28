@@ -1,9 +1,9 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { SchemaTypes, Types } from 'mongoose';
+import { SchemaTypes } from 'mongoose';
 
 import { Thing } from './thing.entity';
 
-@Schema()
+@Schema({ toObject: { getters: false }, toJSON: { getters: false } })
 export class Attach {
   @Prop({
     type: SchemaTypes.ObjectId,
@@ -11,10 +11,14 @@ export class Attach {
     required: true,
     unique: true,
   })
-  thing: Types.ObjectId;
+  thing: string;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: Thing.name, required: true })
-  container: Types.ObjectId;
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    ref: Thing.name,
+    required: true,
+  })
+  container: string;
 }
 
 export const AttachSchema = SchemaFactory.createForClass(Attach);

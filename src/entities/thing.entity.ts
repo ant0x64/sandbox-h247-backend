@@ -1,15 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { SchemaTypes, Types } from 'mongoose';
 
 export enum ThingTypeList {
   ELEMENT = 'element',
   CONTAINER = 'container',
 }
 
-@Schema()
+@Schema({ virtuals: true, toJSON: { virtuals: true, getters: true } })
 export class Thing {
-  @Prop({ type: SchemaTypes.ObjectId, virtual: true, get: () =>  })
-  id: Types.ObjectId;
+  @Prop({
+    type: String,
+    virtual: true,
+    get: function () {
+      return this._id.toString();
+    },
+  })
+  id: string;
 
   @Prop({
     type: Number,

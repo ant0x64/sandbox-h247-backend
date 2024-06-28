@@ -12,6 +12,7 @@ import { ThingDto } from './dto/thing.dto';
 import { LoadDto } from './dto/load.dto';
 import { AttachDto } from './dto/attach.dto';
 
+// @todo dto serializer and class mapper
 @Injectable()
 export class AppService {
   constructor(
@@ -19,15 +20,10 @@ export class AppService {
     @InjectModel(Attach.name) private attachModel: Model<Attach>,
   ) {}
 
-  async loadState(): Promise<LoadDto> {
+  async load(): Promise<LoadDto> {
     return {
       things: await this.thingModel.find().exec(),
-      attaches: (await this.attachModel.find().exec()).map((attach) => {
-        return {
-          thingId: attach.thing._id.toString(),
-          containerId: attach.container._id.toString(),
-        };
-      }),
+      attaches: await this.attachModel.find().exec(),
     };
   }
 
@@ -37,18 +33,44 @@ export class AppService {
   }
 
   async attachThing(attachDto: AttachDto): Promise<AttachDto> {
-    this.validateAttachDto(attachDto);
+    await this.validateAttachDto(attachDto);
 
-    await this.attachModel
-      .create({
-        thing: attachDto.thingId,
-        container: attachDto.containerId,
-      })
+    return await this.attachModel
+      .findOneAndUpdate(
+        { thing: attachDto.thing },
+        {
+          thing: attachDto.thing,
+          container: attachDto.container,
+        },
+        { new: true, upsert: true },
+      )
       .catch(() => {
         throw new ConflictException('Element already attached');
       });
+  }
 
-    return attachDto;
+  async deleteThing(id: ThingDto['id']): Promise<void> {
+    if (!(await this.thingModel.findById(id).exec())) {
+      throw new NotFoundException();
+    }
+
+    // const session = await this.connection.startSession();
+    // session.startTransaction();
+
+    await this.attachModel
+      .deleteMany({
+        $or: [
+          {
+            container: id,
+          },
+          {
+            thing: id,
+          },
+        ],
+      })
+      .exec();
+
+    await this.thingModel.deleteOne({ _id: id }).exec();
   }
 
   protected async validateAttachDto(attachDto: AttachDto) {
@@ -58,7 +80,7 @@ export class AppService {
           _id: { $in: Object.values(attachDto) },
         })
         .exec()
-    ).sort((a) => (a._id.toString() === attachDto.thingId ? -1 : 1));
+    ).sort((a) => (a._id.toString() === attachDto.thing ? -1 : 1));
 
     if (!element || !container) {
       throw new NotFoundException("Thing doesn't exist");
@@ -72,6 +94,9 @@ export class AppService {
       await this.attachModel
         .find({
           container: container._id,
+          thing: {
+            $ne: attachDto.thing,
+          },
         })
         .exec()
     ).map((attach) => attach.thing);

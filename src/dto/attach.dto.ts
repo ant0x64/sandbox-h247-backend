@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
+import { Attach } from 'src/entities/attach.entity';
 
-export class AttachDto {
+export class AttachDto implements Attach {
   @IsNotEmpty()
   @ApiProperty()
-  thingId: string;
+  thing: string;
 
   @IsNotEmpty()
   @ApiProperty()
-  containerId: string | null;
+  container: string;
 }
