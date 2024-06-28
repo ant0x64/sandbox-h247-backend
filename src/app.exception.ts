@@ -24,7 +24,7 @@ export class AppExceptionFilter implements ExceptionFilter<HttpException> {
             statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
           } as HttpExceptionBody);
 
-    console.error(exception.message);
+    responseBody.message = `[back-end] ${responseBody.message}`;
 
     response.statusCode =
       (exception && exception['status']) || HttpStatus.INTERNAL_SERVER_ERROR;

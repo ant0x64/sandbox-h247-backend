@@ -1,11 +1,21 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LoadDto } from './dto/load.dto';
 import { ThingDto } from './dto/thing.dto';
 import { AttachDto } from './dto/attach.dto';
+import { AuthGuard } from './modules/auth/auth.guard';
 
 @Controller()
+@UseGuards(AuthGuard)
 export class AppController {
   constructor(private readonly appService: AppService) {}
 

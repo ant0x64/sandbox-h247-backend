@@ -7,10 +7,13 @@ import { Thing, ThingSchema } from './entities/thing.entity';
 import { Attach, AttachSchema } from './entities/attach.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthController } from './modules/auth/auth.controller';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
-  controllers: [AppController],
+  controllers: [AppController, AuthController],
   imports: [
+    AuthModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.DATABASE),
     MongooseModule.forFeature([

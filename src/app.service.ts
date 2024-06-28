@@ -5,14 +5,19 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Thing } from './entities/thing.entity';
 import { Model } from 'mongoose';
+
+import { Thing } from './entities/thing.entity';
 import { Attach } from './entities/attach.entity';
+
 import { ThingDto } from './dto/thing.dto';
 import { LoadDto } from './dto/load.dto';
 import { AttachDto } from './dto/attach.dto';
 
-// @todo dto serializer and class mapper
+/**
+ * @todo: Implement a custom DTO serializer to trim extra data (Mongoose is not supported in Nest core).
+ */
+
 @Injectable()
 export class AppService {
   constructor(
