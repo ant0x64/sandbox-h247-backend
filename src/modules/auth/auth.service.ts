@@ -19,16 +19,6 @@ export class AuthService {
   }
 
   generateToken(payload: AuthPayload): string {
-    console.log(payload);
-
-    try {
-      this.jwtService.sign(payload, {
-        expiresIn: process.env.TOKEN_EXPIRE_TIME || '60s',
-      });
-    } catch (e) {
-      console.log(e);
-    }
-
     return this.jwtService.sign(payload, {
       expiresIn: process.env.TOKEN_EXPIRE_TIME || '60s',
     });

@@ -8,7 +8,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { LoadDto } from './dto/load.dto';
 import { ThingDto } from './dto/thing.dto';
 import { AttachDto } from './dto/attach.dto';
@@ -16,6 +21,7 @@ import { AuthGuard } from './modules/auth/auth.guard';
 
 @Controller()
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
@@ -30,6 +36,8 @@ export class AppController {
 
   @Post('create')
   @ApiOperation({ summary: 'Create Thing' })
+  @ApiResponse({ type: ThingDto })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiBody({ type: ThingDto })
   create(@Body() thingDto: ThingDto): Promise<ThingDto> {
     return this.appService.createThing(thingDto);
@@ -37,12 +45,16 @@ export class AppController {
 
   @Post('attach')
   @ApiOperation({ summary: 'Attach Thing' })
+  @ApiResponse({ type: AttachDto })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 409, description: 'Conflict' })
   @ApiBody({ type: AttachDto })
   attach(@Body() attachDto: AttachDto): Promise<AttachDto> {
     return this.appService.attachThing(attachDto);
   }
 
   @Delete('delete/:id')
+  @ApiResponse({ status: 404, description: 'Not Found' })
   @ApiOperation({ summary: 'Delete Thing' })
   delete(@Param('id') id: string): Promise<void> {
     return this.appService.deleteThing(id);

@@ -5,7 +5,7 @@ import { Thing, ThingTypeList } from 'src/entities/thing.entity';
 
 export class ThingDto implements Omit<Thing, 'id'> {
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   id?: string;
 
   @IsNumber()
@@ -15,5 +15,6 @@ export class ThingDto implements Omit<Thing, 'id'> {
   size: number;
 
   @IsEnum(ThingTypeList)
+  @ApiProperty({ enum: ThingTypeList })
   type: ThingTypeList;
 }

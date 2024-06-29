@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 import { AppModule } from './app.module';
 import { AppExceptionFilter } from './app.exception';
+import { enableSwagger } from './modules/swagger';
 
 async function bootstrap() {
   ConfigModule.forRoot({ isGlobal: true });
@@ -18,6 +19,7 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new AppExceptionFilter());
   app.enableCors();
+  enableSwagger(app);
 
   app.listen(process.env.PORT || 4000);
 }

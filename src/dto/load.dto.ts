@@ -3,9 +3,9 @@ import { ThingDto } from './thing.dto';
 import { AttachDto } from './attach.dto';
 
 export class LoadDto {
-  @ApiProperty()
+  @ApiProperty({ type: [ThingDto] })
   things: ThingDto[];
 
-  @ApiProperty()
+  @ApiProperty({ type: [AttachDto] })
   attaches: AttachDto[];
 }
