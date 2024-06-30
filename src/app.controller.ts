@@ -7,17 +7,21 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { AppService } from './app.service';
+
 import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
+
+import { AuthGuard } from './modules/auth/auth.guard';
+
+import { AppService } from './app.service';
+
 import { LoadDto } from './dto/load.dto';
 import { ThingDto } from './dto/thing.dto';
 import { AttachDto } from './dto/attach.dto';
-import { AuthGuard } from './modules/auth/auth.guard';
 
 @Controller()
 @UseGuards(AuthGuard)

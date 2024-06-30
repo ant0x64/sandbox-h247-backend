@@ -3,7 +3,10 @@ import { SchemaTypes } from 'mongoose';
 
 import { Thing } from './thing.entity';
 
-@Schema({ toObject: { getters: false }, toJSON: { getters: false } })
+@Schema({
+  toObject: { getters: false },
+  toJSON: { getters: false, versionKey: false },
+})
 export class Attach {
   @Prop({
     type: SchemaTypes.ObjectId,

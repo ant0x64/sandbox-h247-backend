@@ -14,10 +14,7 @@ import { ThingDto } from './dto/thing.dto';
 import { LoadDto } from './dto/load.dto';
 import { AttachDto } from './dto/attach.dto';
 
-/**
- * @todo: Implement a custom DTO serializer to trim extra data (Mongoose is not supported in Nest core).
- */
-
+/** @todo: Implement a custom DTO serializer to trim extra data (Mongoose objects is not supported in Nest core). */
 @Injectable()
 export class AppService {
   constructor(
@@ -59,8 +56,8 @@ export class AppService {
       throw new NotFoundException();
     }
 
-    // const session = await this.connection.startSession();
-    // session.startTransaction();
+    const session = await this.attachModel.db.startSession();
+    session.startTransaction();
 
     await this.attachModel
       .deleteMany({
@@ -76,6 +73,9 @@ export class AppService {
       .exec();
 
     await this.thingModel.deleteOne({ _id: id }).exec();
+
+    session.commitTransaction();
+    session.endSession();
   }
 
   protected async validateAttachDto(attachDto: AttachDto) {

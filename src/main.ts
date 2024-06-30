@@ -1,9 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+
 import { ValidationPipe } from '@nestjs/common';
 
 import { AppModule } from './app.module';
 import { AppExceptionFilter } from './app.exception';
+
 import { enableSwagger } from './modules/swagger';
 
 async function bootstrap() {
@@ -14,13 +16,16 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      strictGroups: true,
+      whitelist: true,
     }),
   );
   app.useGlobalFilters(new AppExceptionFilter());
   app.enableCors();
   enableSwagger(app);
 
-  app.listen(process.env.PORT || 4000);
+  app.listen(
+    process.env.PORT || 4000,
+    process.env.NODE_ENV === 'development' ? '0.0.0.0' : null,
+  );
 }
 bootstrap();

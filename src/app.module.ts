@@ -3,12 +3,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { ConfigModule } from '@nestjs/config';
 
-import { Thing, ThingSchema } from './entities/thing.entity';
-import { Attach, AttachSchema } from './entities/attach.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
 import { AuthController } from './modules/auth/auth.controller';
 import { AuthModule } from './modules/auth/auth.module';
+
+import { Thing, ThingSchema } from './entities/thing.entity';
+import { Attach, AttachSchema } from './entities/attach.entity';
 
 @Module({
   controllers: [AppController, AuthController],

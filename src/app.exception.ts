@@ -16,15 +16,17 @@ export class AppExceptionFilter implements ExceptionFilter<HttpException> {
   catch(exception: Error | undefined, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse<ServerResponse>();
 
+    console.error(exception);
+
     const responseBody =
       exception && exception['response']
         ? exception['response']
         : ({
-            error: '[App Exception Filter] Internal Server Error',
+            error: '[Exception Filter] Internal Server Error',
             statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
           } as HttpExceptionBody);
 
-    responseBody.message = `[back-end] ${responseBody.message}`;
+    responseBody.message = `[Back-end] ${responseBody.message}`;
 
     response.statusCode =
       (exception && exception['status']) || HttpStatus.INTERNAL_SERVER_ERROR;

@@ -5,7 +5,14 @@ export enum ThingTypeList {
   CONTAINER = 'container',
 }
 
-@Schema({ virtuals: true, toJSON: { virtuals: true, getters: true } })
+@Schema({
+  virtuals: true,
+  toJSON: {
+    virtuals: true,
+    getters: true,
+    versionKey: false,
+  },
+})
 export class Thing {
   @Prop({
     type: String,
